@@ -8,21 +8,27 @@ import java.lang.reflect.Array;
  * search, extract, delete, and otherwise mess with the contents of archives that may
  * well be recursive (eek)
  * 
- * I think for now we're going to start with just handling tar archive format, with
- * plans to add .zip directory shit, as well.  Compression libraries for starting out
- * will be gzip, bz2, lz4, and rar
+ * I think for now we're going to start with just handling tar archive format, 
+ * with plans to add .zip directory shit, as well.  Compression libraries for
+ * starting out will be gzip, bz2, lz4, and rar
  */
 
 
 public class RecScan {
 	//'constants'
+	//compressors
 	public static final String BZ2 			= 	new String("bzip2");
 	public static final String GZ 			= 	new String("gzip");
 	public static final String LZ4			=	new String("lz4");
 	public static final String RAR			=	new String("rar");
 	public static final String XZ			=	new String("xz");
-	public static final String arcList[]	= 	{BZ2, GZ, LZ4, RAR, XZ};
+	public static final String compList[]	= 	{BZ2, GZ, LZ4, RAR, XZ};
 
+	//archivers
+	public static final String TAR			=	new String("tar");
+	public static final String ZIP			=	new String("zip");
+	public static final String arcList[]	=	{TAR, ZIP};
+	
 	/**
 	 * @param args
 	 */
@@ -33,7 +39,7 @@ public class RecScan {
 		
 		if ((args.length == 0) || (args.length > 2)) {
 			System.out.println("Usage:\trecscan [archive] [match string] " +
-					"print fn hits in archive\n" + "\t\trecscan [archive] " +
+					"print fn hits in archive\n" + "\trecscan [archive] " +
 					"list all archive contents");
 			return;
 		} else if (args.length == 1) {
@@ -62,7 +68,7 @@ public class RecScan {
 	}
 
 	private static String determineType(String nang) throws Exception {
-		for (String alg : arcList) {
+		for (String alg : compList) {
 			if (nang.endsWith(alg)) {
 				return alg;
 			}
@@ -76,7 +82,7 @@ public class RecScan {
 		Archive tgt	=	new Archive();
 		
 		try {
-			tgt.setArctype(determineType(fname));
+			tgt.setArcType(determineType(fname));
 		} catch (Exception e) {
 			//yeah we need to do this on stderr, but I'm not looking that
 			//up right this second
