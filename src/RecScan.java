@@ -1,4 +1,6 @@
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 
 /*
@@ -26,8 +28,8 @@ public class RecScan {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		Archive target = new Archive();
-		String algo;
+		Archive target 	= new Archive();
+		String rawlist	= new String();
 		
 		if ((args.length == 0) || (args.length > 2)) {
 			System.out.println("Usage:\trecscan [archive] [match string] " +
@@ -38,17 +40,20 @@ public class RecScan {
 			//let's get the entire archive's content list (with all sub-
 			//archives)
 			try {
-				algo = determineType(args[0]);
+				target = initTarget(args[0]);
 			} catch (Exception e) {
-				//yeah we need to do this on stderr, but I'm not looking that
-				//up right this second
+				//yeah this needs to go to stderr
 				System.out.println(e);
 				return;
 			}
 			
-			target.setArctype(algo);
-			target.setFn(args[0]);
-			
+			try {
+				rawlist = getArcContentList(target);
+			} catch (Exception e) {
+				//stderr, etc
+				System.out.println(e);
+				return;
+			}
 		} else {
 			//print every match of userstring from the archive's entire
 			//content list
@@ -64,6 +69,49 @@ public class RecScan {
 		}
 		
 		throw new Exception("Not a valid archive name scheme");
+	}
+	
+	private static Archive initTarget(String fname) 
+			throws Exception {
+		Archive tgt	=	new Archive();
+		
+		try {
+			tgt.setArctype(determineType(fname));
+		} catch (Exception e) {
+			//yeah we need to do this on stderr, but I'm not looking that
+			//up right this second
+			System.out.println(e);
+			throw new Exception(e);
+		}
+		
+		tgt.setFn(fname);
+		return tgt;
+	}
+	
+	private static String getArcContentList(Archive ouah) 
+			throws Exception {
+		String output = null;
+		
+		try {
+			String line;
+			ProcessBuilder pb = 
+					new ProcessBuilder(ouah.getExpandExecString());
+			
+			Process p = pb.start();
+			p.waitFor();
+			
+			BufferedReader bri =
+					new BufferedReader(
+							new InputStreamReader(p.getInputStream()));
+			
+			while ((line = bri.readLine()) != null) {
+				output += line;
+			}
+		} catch (Exception e) {
+			throw new Exception("Fucked: getArcContentList()");
+		}
+		
+		return output;
 	}
 	
 }
