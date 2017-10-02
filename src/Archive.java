@@ -2,13 +2,6 @@ import java.util.HashMap;
 
 
 public class Archive {
-	//'constants'
-	public static final String BZ2 	= 	new String("bzip2");
-	public static final String GZ 	= 	new String("gzip");
-	public static final String LZ4	=	new String("lz4");
-	public static final String RAR	=	new String("rar");
-	public static final String XZ	=	new String("xz");
-	
 	//let's try using a HashMap
 	public HashMap<String, String> compressor;
 	public HashMap<String, String> flagSet;
