@@ -1,7 +1,12 @@
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /*
  * This one is gonna be fun.  Working on trying to create something to help me
@@ -17,17 +22,17 @@ import java.lang.reflect.Array;
 public class RecScan {
 	//'constants'
 	//compressors
-	public static final String BZ2 			= 	new String("bzip2");
-	public static final String GZ 			= 	new String("gzip");
+	public static final String BZ2 			= 	new String("bz2");
+	public static final String GZ 			= 	new String("gz");
 	public static final String LZ4			=	new String("lz4");
 	public static final String RAR			=	new String("rar");
 	public static final String XZ			=	new String("xz");
-	public static final String compList[]	= 	{BZ2, GZ, LZ4, RAR, XZ};
+	public static final String COMPLIST[]	= 	{BZ2, GZ, LZ4, RAR, XZ};
 
 	//archivers
 	public static final String TAR			=	new String("tar");
 	public static final String ZIP			=	new String("zip");
-	public static final String arcList[]	=	{TAR, ZIP};
+	public static final String ARCLIST[]	=	{TAR, ZIP};
 	
 	/**
 	 * @param args
@@ -49,7 +54,7 @@ public class RecScan {
 				target = initTarget(args[0]);
 			} catch (Exception e) {
 				//yeah this needs to go to stderr
-				System.out.println(e);
+				//System.out.println(e);
 				return;
 			}
 			
@@ -65,10 +70,12 @@ public class RecScan {
 			//content list
 			
 		}
+		
+		System.out.println(rawlist + "\n");
 	}
 
 	private static String determineType(String nang) throws Exception {
-		for (String alg : compList) {
+		for (String alg : COMPLIST) {
 			if (nang.endsWith(alg)) {
 				return alg;
 			}
@@ -81,12 +88,14 @@ public class RecScan {
 			throws Exception {
 		Archive tgt	=	new Archive();
 		
+		tgt.init();
+		
 		try {
 			tgt.setArcType(determineType(fname));
 		} catch (Exception e) {
 			//yeah we need to do this on stderr, but I'm not looking that
 			//up right this second
-			System.out.println(e);
+			//System.out.println(e);
 			throw new Exception(e);
 		}
 		
@@ -94,14 +103,43 @@ public class RecScan {
 		return tgt;
 	}
 	
+	//NOTE: this does NOT handle any recursion yet
 	private static String getArcContentList(Archive ouah) 
 			throws Exception {
+		if (ouah.isEmpty()) {
+			System.out.println("WTF");
+		}
+		
 		String output = null;
+		String origDir = null;
+		Path dirList[] = null;
+		Path ouahful = null;	//WHY doesn't the array above work?  >:-0
+		Path tmpDir = Paths.get("/tmp");
+		//not working why? -> Paths.get(System.getProperty("java.io.tmpdir"));
+		
+		//create temp dir, move there
+		//not going to check to see if the original fn contains a slash,
+		//indicating the need for more pathwork, just yet
+		origDir = System.getProperty("user.dir");
+		//System.out.println("origDir:\t" + origDir + "\ttmpDir:\t" + 
+		//		tmpDir.toString());
+		try {
+			ouahful = Files.createTempDirectory(tmpDir, "recscan_");
+			//System.out.println("ouahful:\t" + ouahful);
+		} catch (IOException e) {
+			throw new Exception("Fucked: createTempDirectory()\n" +
+					e.getMessage());
+		}
 		
 		try {
 			String line;
 			ProcessBuilder pb = 
 					new ProcessBuilder(ouah.getExpandExecString());
+			System.out.println("command string:\t" + 
+					ouah.getExpandExecString().toString());
+			
+			pb.directory(ouahful.toFile());
+			//System.out.println(pb.directory().toString());
 			
 			Process p = pb.start();
 			p.waitFor();
@@ -114,10 +152,17 @@ public class RecScan {
 				output += line;
 			}
 		} catch (Exception e) {
-			throw new Exception("Fucked: getArcContentList()");
+			ouahful.toFile().delete();
+			throw new Exception("Fucked: getArcContentList()\n" +
+					e.getMessage());
 		}
 		
+		
 		return output;
+	}
+	
+	private static void cleanUp() {
+		//remove any dingleberries here
 	}
 	
 }

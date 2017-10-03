@@ -3,9 +3,24 @@ import java.util.HashMap;
 
 public class Archive {
 	//let's try using a HashMap
-	private HashMap<String, String> compressor, archiver;
-	private HashMap<String, String> dFlagSet, lFlagSet, sOFlagSet, sIFlagSet;
-	private HashMap<String, Boolean> compDoesArc;
+	private HashMap<String, String> compressor = 
+			new HashMap<String, String>();
+	private HashMap<String, String> archiver = 
+			new HashMap<String, String>();
+	private HashMap<String, String> dFlagSet =
+			new HashMap<String, String>();
+	private HashMap<String, String> lFlagSet =
+			new HashMap<String, String>();
+	private HashMap<String, String> sOFlagSet =
+			new HashMap<String, String>();
+	private HashMap<String, String> sIFlagSet =
+			new HashMap<String, String>();
+	private HashMap<String, String> oFlagSet =
+			new HashMap<String, String>();
+	private HashMap<String, String> xFlagSet =
+			new HashMap<String, String>();
+	private HashMap<String, Boolean> compDoesArc =
+			new HashMap<String, Boolean>();
 	
 	//instance properties
 	private String 	arcType			=	null;
@@ -47,6 +62,8 @@ public class Archive {
 	
 	//misc methods
 	public void init() {
+		//HashMap compressor = new HashMap<String, String>;
+		
 		//-->>compressor<<--
 		compressor.put(RecScan.GZ, "/bin/gzip");
 		compressor.put(RecScan.BZ2, "/bin/bzip2");
@@ -73,37 +90,66 @@ public class Archive {
 		sIFlagSet.put(RecScan.ZIP, null);		
 		
 		//-->>archiver<<--
-		archiver.put(RecScan.TAR, "/bin/tar");
-		archiver.put(RecScan.ZIP, "/usr/bin/unzip");		
+		archiver.put(RecScan.TAR, null); //"/bin/tar");
+		archiver.put(RecScan.GZ, "/bin/tar");
+		archiver.put(RecScan.BZ2, "/bin/tar");
+		archiver.put(RecScan.LZ4, "/bin/tar");
+		archiver.put(RecScan.RAR, null); //"/usr/bin/rar");
+		archiver.put(RecScan.ZIP, null); //"/usr/bin/unzip");		
 		
 		//compressor handles archival
-		compDoesArc.put(RecScan.TAR, false);
+		compDoesArc.put(RecScan.GZ, false);
+		compDoesArc.put(RecScan.BZ2, false);
+		compDoesArc.put(RecScan.LZ4, false);	//need to verify
+		compDoesArc.put(RecScan.RAR, true);
 		compDoesArc.put(RecScan.ZIP, true);
 		
 		//list contents flag
 		lFlagSet.put(RecScan.TAR, "-t");
 		lFlagSet.put(RecScan.ZIP, "-l");
+		
+		//extract flag
+		xFlagSet.put(RecScan.TAR, "-x");
+		xFlagSet.put(RecScan.ZIP, null);
+		
+		//other flags? (stdin read flag)
+		oFlagSet.put(RecScan.TAR, "-");
+		oFlagSet.put(RecScan.ZIP, null);
 	}
 	
-	public String getExpandExecString() throws Exception {
-		String godOuah = new String();
+	public String[] getExpandExecString() throws Exception {
+		String godOuah[] = null;
 		
 		//too simple (duh); if it's tar, for example, we need to conditionally
 		//decompress and unarchive separately [ouah ouah ouah]
-		godOuah = compressor.get(arcType) + " " + dFlagSet.get(arcType) + " ";
-		if (!compDoesArc.get(compressor)) {
-			//create piped command
-			godOuah += "sOFlagSet.get(arcType) + " | " + archiver.get(arcType) +
-						+ " " + 
+		godOuah[0] = compressor.get(arcType);
+		godOuah[1] = dFlagSet.get(arcType);
+		if (!compDoesArc.get(arcType)) {
+			godOuah[2] = sOFlagSet.get(arcType);
 		}
+		
+		/*if (!compDoesArc.get(arcType)) {
+			//create piped command
+			godOuah += sOFlagSet.get(arcType) + " | ";
+			System.out.println(archiver.get(arcType));
+			//if (archiver.get(arcType).compareTo(RecScan.TAR) == 0) {
+				godOuah += archiver.get(arcType) + " " +
+					xFlagSet.get(RecScan.TAR) + " " +
+					oFlagSet.get(RecScan.TAR);
+			//}
+						//archiver.get(arcType) +	" " + xFlagSet.get(arcType) + 
+						//" " + oFlagSet.get(arcType);
+		} */
+		
+		return godOuah;
 	}
 	
-	public String getListExecString() throws Exception {
+	/* public String getListExecString() throws Exception {
 		//don't forget to bring a towel!
-	}
+	} */
 	
 	//this probably won't be needed
-	private boolean isEmpty() {
+	public boolean isEmpty() {
 		//also: unit testing is going to make this a LOT easier by taking out
 		//the following type of bullshit code
 		if (compressor.equals(null) || dFlagSet.equals(null) ||
