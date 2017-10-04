@@ -1,6 +1,11 @@
 import java.util.HashMap;
 
-
+/**
+ * 
+ * @author Damon Getsman
+ * Archive object definition
+ *
+ */
 public class Archive {
 	//let's try using a HashMap
 	private HashMap<String, String> compressor = 
@@ -62,8 +67,6 @@ public class Archive {
 	
 	//misc methods
 	public void init() {
-		//HashMap compressor = new HashMap<String, String>;
-		
 		//-->>compressor<<--
 		compressor.put(RecScan.GZ, "/bin/gzip");
 		compressor.put(RecScan.BZ2, "/bin/bzip2");
@@ -117,7 +120,11 @@ public class Archive {
 		oFlagSet.put(RecScan.ZIP, null);
 	}
 	
-	public String[] getExpandExecString() throws Exception {
+	public String[] getTarGzDir() {
+		
+	}
+	
+	/*public String[] getExpandExecString() throws Exception {
 		String godOuah[] = null;
 		
 		//too simple (duh); if it's tar, for example, we need to conditionally
@@ -139,10 +146,10 @@ public class Archive {
 			//}
 						//archiver.get(arcType) +	" " + xFlagSet.get(arcType) + 
 						//" " + oFlagSet.get(arcType);
-		} */
+		}
 		
 		return godOuah;
-	}
+	}*/
 	
 	/* public String getListExecString() throws Exception {
 		//don't forget to bring a towel!

@@ -8,17 +8,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/*
- * This one is gonna be fun.  Working on trying to create something to help me
- * search, extract, delete, and otherwise mess with the contents of archives that may
- * well be recursive (eek)
+/**
  * 
- * I think for now we're going to start with just handling tar archive format, 
- * with plans to add .zip directory shit, as well.  Compression libraries for
- * starting out will be gzip, bz2, lz4, and rar
+ * @author Damon Getsman
+ * started: 1 Oct 17
+ * finished: 
+ * 
+ * This one is gonna be fun.  Working on trying to create something to help me
+ * search, extract, delete, and otherwise mess with the contents of archives that
+ * may well be recursive (eek).  I've really needed a utility like this for a long
+ * time, and I also know that I need the work on coding recursive algorithms, so
+ * I'm not going to bother looking for someone else's utility.
+ * 
+ * Only working with tar as an archiver right now; compression supported at this
+ * point will be gzip, bz2, lz4, xz, and rar.
+ *
  */
-
-
 public class RecScan {
 	//'constants'
 	//compressors
@@ -35,12 +40,12 @@ public class RecScan {
 	public static final String ARCLIST[]	=	{TAR, ZIP};
 	
 	/**
-	 * @param args
+	 * @param args[] - just the usual for main()
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Archive target 	= new Archive();
-		String rawlist	= new String();
+		String[] rawlist = null;
 		
 		if ((args.length == 0) || (args.length > 2)) {
 			System.out.println("Usage:\trecscan [archive] [match string] " +
@@ -59,7 +64,10 @@ public class RecScan {
 			}
 			
 			try {
-				rawlist = getArcContentList(target);
+				//int cntr = 0;
+				//do {
+					rawlist = target.getTarGzDir();
+				//} while (rawlist[cntr++] != null);
 			} catch (Exception e) {
 				//stderr, etc
 				System.out.println(e);
@@ -71,9 +79,15 @@ public class RecScan {
 			
 		}
 		
-		System.out.println(rawlist + "\n");
+		System.out.println(rawlist.toString() + "\n");
 	}
 
+	/**
+	 * 
+	 * @param nang - archive filename
+	 * @return String - archive format constant
+	 * @throws Exception
+	 */
 	private static String determineType(String nang) throws Exception {
 		for (String alg : COMPLIST) {
 			if (nang.endsWith(alg)) {
@@ -84,6 +98,12 @@ public class RecScan {
 		throw new Exception("Not a valid archive name scheme");
 	}
 	
+	/**
+	 * 
+	 * @param fname - archive filename
+	 * @return Archive - initialized archive object
+	 * @throws Exception
+	 */
 	private static Archive initTarget(String fname) 
 			throws Exception {
 		Archive tgt	=	new Archive();
@@ -104,17 +124,24 @@ public class RecScan {
 	}
 	
 	//NOTE: this does NOT handle any recursion yet
-	private static String getArcContentList(Archive ouah) 
+	/**
+	 * 
+	 * @param ouah - initialized archive
+	 * @throws Exception
+	 */
+	private static void getArcContentList(Archive ouah) 
 			throws Exception {
 		if (ouah.isEmpty()) {
 			System.out.println("WTF");
 		}
 		
-		String output = null;
+		//String output = null;
 		String origDir = null;
-		Path dirList[] = null;
+		String dirList[] = null;
 		Path ouahful = null;	//WHY doesn't the array above work?  >:-0
 		Path tmpDir = Paths.get("/tmp");
+		String tarFile = null;
+		
 		//not working why? -> Paths.get(System.getProperty("java.io.tmpdir"));
 		
 		//create temp dir, move there
@@ -131,36 +158,15 @@ public class RecScan {
 					e.getMessage());
 		}
 		
-		try {
-			String line;
-			ProcessBuilder pb = 
-					new ProcessBuilder(ouah.getExpandExecString());
-			System.out.println("command string:\t" + 
-					ouah.getExpandExecString().toString());
-			
-			pb.directory(ouahful.toFile());
-			//System.out.println(pb.directory().toString());
-			
-			Process p = pb.start();
-			p.waitFor();
-			
-			BufferedReader bri =
-					new BufferedReader(
-							new InputStreamReader(p.getInputStream()));
-			
-			while ((line = bri.readLine()) != null) {
-				output += line;
-			}
-		} catch (Exception e) {
-			ouahful.toFile().delete();
-			throw new Exception("Fucked: getArcContentList()\n" +
-					e.getMessage());
-		}
+		//System.out.println(ouahful.iterator().toString());
+		tarFile = ouahful.iterator().toString();
+		dirList = tarListDir(Zip.zipOpenStream(tarFile));
 		
-		
-		return output;
 	}
 	
+	/**
+	 * cleans up any dingleberries laying around (not utilized)
+	 */
 	private static void cleanUp() {
 		//remove any dingleberries here
 	}
