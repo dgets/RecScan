@@ -4,6 +4,15 @@ import static org.junit.Assert.*;
 import java.util.HashMap;
 import org.junit.Test;
 
+/**
+ * 
+ * @author Damon Getsman
+ * This class holds the 'struct' fields to be used for any archive.  It is
+ * used as a parent class for 'Arc', which actually is instantiated for any
+ * particular archive's object.  The init() method is used to populate the
+ * struct with the appropriate 'constants'
+ *
+ */
 public class ArcStructTest {
 
 	@Test

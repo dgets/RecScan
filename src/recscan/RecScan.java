@@ -9,6 +9,8 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import recscan.MultiZip;
+import recscan.Tar;
 
 /**
  * 
@@ -45,38 +47,38 @@ public class RecScan {
 	
 	/**
 	 * @param args[] - just the usual for main()
+	 * @return int - 0 success/1 Arc.init() failure/2 Tar/MultiZip failure
 	 */
-	public static void main(String[] args) {
+	public static int main(String[] args) {
 		// TODO Auto-generated method stub
-		Archive target 	= new Archive();
-		String[] rawlist = null;
+		Arc target 			= new Arc();
+		String[] rawlist 	= null;
 		
 		if ((args.length == 0) || (args.length > 2)) {
 			System.out.println("Usage:\trecscan [archive] [match string] " +
 					"print fn hits in archive\n" + "\trecscan [archive] " +
 					"list all archive contents");
-			return;
+			return 0;
 		} else if (args.length == 1) {
 			//let's get the entire archive's content list (with all sub-
 			//archives)
 			try {
-				target = initTarget(args[0]);
+				target.init(args[0]);
 			} catch (Exception e) {
-				//yeah this needs to go to stderr
-				//System.out.println(e);
-				return;
+				System.err.println(e);
+				return 1;
 			}
 			
 			try {
-				//int cntr = 0;
-				//do {
-					rawlist = target.getTarGzDir();
-				//} while (rawlist[cntr++] != null);
+				rawlist = Tar.tarListDir(MultiZip.openStream(target));
 			} catch (Exception e) {
-				//stderr, etc
-				System.out.println(e);
-				return;
+				System.err.println(e);
+				return 2;
 			}
+			
+			//do we need recursion? I guess to avoid decompressing twice we
+			//should probably decompress to /tmp in the first place :|
+			
 		} else {
 			//print every match of userstring from the archive's entire
 			//content list
@@ -84,22 +86,7 @@ public class RecScan {
 		}
 		
 		System.out.println(rawlist.toString() + "\n");
-	}
-
-	/**
-	 * 
-	 * @param nang - archive filename
-	 * @return String - archive format constant
-	 * @throws Exception
-	 */
-	private String determineType(String nang) throws Exception {
-		for (String alg : COMPLIST) {
-			if (nang.endsWith(alg)) {
-				return alg;
-			}
-		}
-		
-		throw new Exception("Not a valid archive name scheme");
+		return 0;
 	}
 	
 	/**
@@ -108,7 +95,7 @@ public class RecScan {
 	 * @return Archive - initialized archive object
 	 * @throws Exception
 	 */
-	private Archive initTarget(String fname) throws Exception {
+	/*private Archive initTarget(String fname) throws Exception {
 		Archive tgt	=	new Archive();
 		
 		tgt.init();
@@ -124,7 +111,7 @@ public class RecScan {
 		
 		tgt.setFn(fname);
 		return tgt;
-	}
+	}*/
 	
 	//NOTE: this does NOT handle any recursion yet
 	/**
@@ -132,6 +119,7 @@ public class RecScan {
 	 * @param ouah - initialized archive
 	 * @throws Exception
 	 */
+	/*@SuppressWarnings("unused")
 	private void getArcContentList(Archive ouah) throws Exception {
 		if (ouah.isEmpty()) {
 			System.out.println("WTF");
@@ -162,15 +150,35 @@ public class RecScan {
 		
 		//System.out.println(ouahful.iterator().toString());
 		tarFile = ouahful.iterator().toString();
-		dirList = tarListDir(Zip.zipOpenStream(tarFile));
+		dirList = tarListDir(Tar.tarListDir(tarFile));
 		
-	}
+	}*/
 	
 	/**
 	 * cleans up any dingleberries laying around (not utilized)
 	 */
-	private void cleanUp() {
+	private void cleanUp(File tempDir) throws Exception {
 		//remove any dingleberries here
+		if (tempDir == null) {
+			return;
+		} else if (tempDir.isDirectory()) {
+            String[] childFiles = tempDir.list();
+            if(childFiles == null) {
+                //Directory is empty. Proceed for deletion
+                tempDir.delete();
+            } else {
+                //Directory has other files.
+                //Need to delete them first
+                for (String childFilePath :  childFiles) {
+                    //recursive delete the files
+                    cleanUp(new File(childFilePath));
+                }
+            }
+            
+        } else {
+            //it is a simple file. Proceed for deletion
+            tempDir.delete();
+        }
 	}
 	
 }

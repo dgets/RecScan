@@ -29,7 +29,7 @@ public class ArcStruct {
 	
 	//methods
 	/**
-	 * 
+	 * Method initializes an ArcStruct with the proper HashMap values
 	 */
 	public void init() {
 		HashMap<String, String> stuffIt = 
@@ -65,8 +65,5 @@ public class ArcStruct {
 		algo.put(RecScan.TAR, stuffIt);
 		
 		//zip
-		
 	}
-	
-
 }

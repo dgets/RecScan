@@ -1,8 +1,14 @@
 package recscan;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 /**
  * 
  * @author Damon Getsman
+ * Object to be instantiated for any particular archive to work with.
+ * Child of ArcStruct.
  *
  */
 public class Arc extends ArcStruct {
@@ -15,15 +21,13 @@ public class Arc extends ArcStruct {
 		return this.fn;
 	}
 	
-	/*public void setFn(String fname) {
-		this.fn = fname;
-	}*/
-	
 	public String getArcType() {
 		return this.arcType;
 	}
 	
 	//constructor(s)
+	public Arc() { }
+	
 	public Arc(String fn) {
 		//this.fn = fn;
 		
@@ -38,7 +42,7 @@ public class Arc extends ArcStruct {
 	//methods
 	/**
 	 * Initializes Arc object for dealing with fname
-	 * @param fname
+	 * @param fname String - filename of the archive
 	 * @throws Exception
 	 */
 	public void init(String fname) throws Exception {
