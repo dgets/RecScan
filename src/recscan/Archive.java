@@ -10,30 +10,35 @@ import java.util.HashMap;
  */
 public class Archive {
 	//let's try using a HashMap
-	private HashMap<String, String> compressor = 
+	//somehow I think that there should probably be a more intricate data
+	//structure here... :P  er maybe a superclass to hold this?  gnahhh
+	private static HashMap<String, String> compressor = 
 			new HashMap<String, String>();
-	private HashMap<String, String> archiver = 
+	private static HashMap<String, String> archiver = 
 			new HashMap<String, String>();
-	private HashMap<String, String> dFlagSet =
+	private static HashMap<String, String> dFlagSet =
 			new HashMap<String, String>();
-	private HashMap<String, String> lFlagSet =
+	private static HashMap<String, String> lFlagSet =
 			new HashMap<String, String>();
-	private HashMap<String, String> sOFlagSet =
+	private static HashMap<String, String> sOFlagSet =
 			new HashMap<String, String>();
-	private HashMap<String, String> sIFlagSet =
+	private static HashMap<String, String> sIFlagSet =
 			new HashMap<String, String>();
-	private HashMap<String, String> oFlagSet =
+	/*private static HashMap<String, String> oFlagSet =
+			new HashMap<String, String>();*/
+	private static HashMap<String, String> xFlagSet =
 			new HashMap<String, String>();
-	private HashMap<String, String> xFlagSet =
-			new HashMap<String, String>();
-	private HashMap<String, Boolean> compDoesArc =
+	private static HashMap<String, Boolean> compDoesArc =
 			new HashMap<String, Boolean>();
 	
-	//instance properties
+	private static String[]	justComp	=	null;
+	private static String[]	justArc		=	null;
+	
+	//instance fields
 	private String 	arcType			=	null;
 	private String	compType		=	null;
 	private String 	fn				=	null;
-	
+
 	//getters/setters
 	public void setArcType(String at) {
 		this.arcType = at;
@@ -69,12 +74,31 @@ public class Archive {
 	
 	//misc methods
 	public void init() {
-		//-->>compressor<<--
+		//-->>compressors<<--
 		compressor.put(RecScan.GZ, "/bin/gzip");
 		compressor.put(RecScan.BZ2, "/bin/bzip2");
 		compressor.put(RecScan.LZ4, null);
 		compressor.put(RecScan.RAR, "/usr/bin/rar");
 		compressor.put(RecScan.XZ, "/usr/bin/xz");
+		compressor.put(RecScan.TAR, null);	//need to specify multiple here?
+											//definitely some logic for other
+											//cases of compressors
+		
+		//yeah this is gross
+		justComp[0] = RecScan.GZ;
+		justComp[1] = RecScan.BZ2;
+		justComp[2] = RecScan.LZ4;
+		justComp[3] = RecScan.XZ;
+		
+		//-->>archivers<<--
+		archiver.put(RecScan.TAR, "/bin/tar");
+		archiver.put(RecScan.GZ, null);	//"/bin/tar");
+		archiver.put(RecScan.BZ2, null);	//"/bin/tar");
+		archiver.put(RecScan.LZ4, null);	//"/bin/tar");
+		archiver.put(RecScan.RAR, "/usr/bin/rar");
+		archiver.put(RecScan.ZIP, "/usr/bin/unzip");
+		
+		justArc[0] = RecScan.TAR;
 		
 		//decompression flag
 		dFlagSet.put(RecScan.GZ, "-d");
@@ -82,6 +106,7 @@ public class Archive {
 		dFlagSet.put(RecScan.LZ4, null);
 		dFlagSet.put(RecScan.RAR, "--extract");
 		dFlagSet.put(RecScan.XZ, "--decompress");
+		dFlagSet.put(RecScan.TAR, null);
 		
 		//stdout flag
 		sOFlagSet.put(RecScan.GZ,  "--stdout");
@@ -89,18 +114,11 @@ public class Archive {
 		sOFlagSet.put(RecScan.LZ4, null);
 		sOFlagSet.put(RecScan.RAR, null);
 		sOFlagSet.put(RecScan.XZ, "--stdout");
+		sOFlagSet.put(RecScan.TAR, null);
 		
 		//stdin flag
-		sIFlagSet.put(RecScan.TAR, "-t");
-		sIFlagSet.put(RecScan.ZIP, null);		
-		
-		//-->>archiver<<--
-		archiver.put(RecScan.TAR, null); //"/bin/tar");
-		archiver.put(RecScan.GZ, "/bin/tar");
-		archiver.put(RecScan.BZ2, "/bin/tar");
-		archiver.put(RecScan.LZ4, "/bin/tar");
-		archiver.put(RecScan.RAR, null); //"/usr/bin/rar");
-		archiver.put(RecScan.ZIP, null); //"/usr/bin/unzip");		
+		sIFlagSet.put(RecScan.TAR, "-");
+		sIFlagSet.put(RecScan.ZIP, null);
 		
 		//compressor handles archival
 		compDoesArc.put(RecScan.GZ, false);
@@ -112,19 +130,28 @@ public class Archive {
 		//list contents flag
 		lFlagSet.put(RecScan.TAR, "-t");
 		lFlagSet.put(RecScan.ZIP, "-l");
+		lFlagSet.put(RecScan.RAR, null);	//needed
 		
 		//extract flag
 		xFlagSet.put(RecScan.TAR, "-x");
 		xFlagSet.put(RecScan.ZIP, null);
-		
-		//other flags? (stdin read flag)
-		oFlagSet.put(RecScan.TAR, "-");
-		oFlagSet.put(RecScan.ZIP, null);
 	}
 	
-	public String[] getTarGzDir() {
-		
+	/**
+	 * Method determines whether or not compression algorithm also handles arc
+	 * @return Boolean true for handles arc as well
+	 */
+	public Boolean arcDoesCompress() {
+		if (justComp.toString().contains(arcType)) {
+			return false;
+		} else {
+			return true;
+		}
 	}
+	
+	/*public String[] getTarGzDir() {
+		
+	}*/
 	
 	/*public String[] getExpandExecString() throws Exception {
 		String godOuah[] = null;

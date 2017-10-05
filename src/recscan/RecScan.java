@@ -41,6 +41,8 @@ public class RecScan {
 	public static final String ZIP			=	new String("zip");
 	public static final String ARCLIST[]	=	{TAR, ZIP};
 	
+	public static final String EXE			=	new String("path_to_exe");
+	
 	/**
 	 * @param args[] - just the usual for main()
 	 */
