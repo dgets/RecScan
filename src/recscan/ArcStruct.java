@@ -10,18 +10,23 @@ import java.util.HashMap;
  */
 public class ArcStruct {
 	//'constants'
-	private static final String CO = "justComp";
-	private static final String D = "dFlag";
-	private static final String SO = "sOFlag";
-	private static final String SI = "sIFlag";
-	private static final String L = "lFlag";
+	public static final String CO = "justComp";
+	public static final String D = "dFlag";
+	public static final String SO = "sOFlag";
+	public static final String SI = "sIFlag";
+	public static final String L = "lFlag";
 	//private static final String X = "xFlag";
-	private static final String O = "oFlag";
+	public static final String O = "oFlag";
 	
 	//fields
-	private static HashMap<String, HashMap> algo = 
-			new HashMap<String, HashMap>();
+	private static HashMap<String, HashMap<String, String>> algo = 
+			new HashMap<String, HashMap<String, String>>();
 
+	//accessors
+	public HashMap<String, String> getAlgo(String algorithm) {
+		return algo.get(algorithm);
+	}
+	
 	//methods
 	/**
 	 * 
@@ -62,4 +67,6 @@ public class ArcStruct {
 		//zip
 		
 	}
+	
+
 }

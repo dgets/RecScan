@@ -92,7 +92,7 @@ public class RecScan {
 	 * @return String - archive format constant
 	 * @throws Exception
 	 */
-	private static String determineType(String nang) throws Exception {
+	private String determineType(String nang) throws Exception {
 		for (String alg : COMPLIST) {
 			if (nang.endsWith(alg)) {
 				return alg;
@@ -108,8 +108,7 @@ public class RecScan {
 	 * @return Archive - initialized archive object
 	 * @throws Exception
 	 */
-	private static Archive initTarget(String fname) 
-			throws Exception {
+	private Archive initTarget(String fname) throws Exception {
 		Archive tgt	=	new Archive();
 		
 		tgt.init();
@@ -133,8 +132,7 @@ public class RecScan {
 	 * @param ouah - initialized archive
 	 * @throws Exception
 	 */
-	private static void getArcContentList(Archive ouah) 
-			throws Exception {
+	private void getArcContentList(Archive ouah) throws Exception {
 		if (ouah.isEmpty()) {
 			System.out.println("WTF");
 		}
@@ -171,7 +169,7 @@ public class RecScan {
 	/**
 	 * cleans up any dingleberries laying around (not utilized)
 	 */
-	private static void cleanUp() {
+	private void cleanUp() {
 		//remove any dingleberries here
 	}
 	
