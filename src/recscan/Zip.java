@@ -1,3 +1,4 @@
+package recscan;
 import java.io.*;
 import java.util.zip.*;
 

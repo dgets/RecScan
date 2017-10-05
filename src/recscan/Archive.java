@@ -1,3 +1,5 @@
+package recscan;
+
 import java.util.HashMap;
 
 /**
@@ -37,7 +39,7 @@ public class Archive {
 		this.arcType = at;
 	}
 	
-	public String getArctype() {
+	public String getArcType() {
 		return this.arcType;
 	}
 	
