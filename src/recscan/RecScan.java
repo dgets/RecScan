@@ -1,14 +1,6 @@
 package recscan;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Array;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import recscan.MultiZip;
 import recscan.Tar;
 
@@ -50,7 +42,6 @@ public class RecScan {
 	 * @return int - 0 success/1 Arc.init() failure/2 Tar/MultiZip failure
 	 */
 	public static int main(String[] args) {
-		// TODO Auto-generated method stub
 		Arc target 			= new Arc();
 		String[] rawlist 	= null;
 		
@@ -157,6 +148,7 @@ public class RecScan {
 	/**
 	 * cleans up any dingleberries laying around (not utilized)
 	 */
+	@SuppressWarnings("unused")
 	private void cleanUp(File tempDir) throws Exception {
 		//remove any dingleberries here
 		if (tempDir == null) {

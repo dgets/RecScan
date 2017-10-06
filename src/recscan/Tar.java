@@ -1,14 +1,7 @@
 package recscan;
-//import java.io.IOException;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.LinkedList;
-import java.util.List;
 
-import org.apache.commons.compress.archivers.ArchiveException;
+import java.io.InputStream;
+
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 //import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -98,11 +91,11 @@ public class Tar {
 	 * @return String - temp directory filename
 	 * @throws Exception
 	 */
-	public static String extract(InputStream incoming) throws Exception {
+	/*public static String extract(InputStream incoming) throws Exception {
 		TarArchiveInputStream tarinput = null;
 		
 		try {
 			
 		}
-	}
+	}*/
 }

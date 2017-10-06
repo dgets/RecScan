@@ -1,9 +1,5 @@
 package recscan;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 /**
  * 
  * @author Damon Getsman
@@ -28,7 +24,7 @@ public class Arc extends ArcStruct {
 	//constructor(s)
 	public Arc() { }
 	
-	public Arc(String fn) {
+	/*public Arc(String fn) {
 		//this.fn = fn;
 		
 		//should this just be thrown/tried from w/in init()?
@@ -37,7 +33,7 @@ public class Arc extends ArcStruct {
 		} catch (Exception e) {
 			System.out.println("Fucked: " + e);
 		}
-	}
+	}*/
 	
 	//methods
 	/**

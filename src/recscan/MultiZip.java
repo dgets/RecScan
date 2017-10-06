@@ -2,7 +2,7 @@ package recscan;
 import java.io.*;
 import java.util.zip.*;
 
-import RecScan;
+//import RecScan;
 
 /**
  * @author Damon Getsman
@@ -18,13 +18,15 @@ public class MultiZip {
 	 * 
 	 */
 	public static InputStream openStream(Arc curArc) throws Exception {
-		try {
-			FileInputStream fis = new FileInputStream(curArc.getFn());
-			
+		FileInputStream fis = new FileInputStream(curArc.getFn());
+		
+		try {			
 			if (curArc.getArcType().equals(RecScan.GZ)) {
+				@SuppressWarnings("unused")
 				GZIPInputStream zis = new GZIPInputStream(
 						new BufferedInputStream(fis));
 			} else if (curArc.getArcType().equals(RecScan.ZIP)){
+				@SuppressWarnings("unused")
 				ZipInputStream zis = new ZipInputStream(
 						new BufferedInputStream(fis));
 			} else {
@@ -33,6 +35,10 @@ public class MultiZip {
 			}
 		} catch (IOException e) {
 			throw new Exception("openStream(): " + e.getMessage());
+		} finally {
+			fis.close();
 		}
+		
+		return (InputStream) fis;
 	}
 }
