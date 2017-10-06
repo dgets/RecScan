@@ -1,6 +1,8 @@
 package RecScan;
 
 import java.io.File;
+import java.io.FileInputStream;
+
 import RecScan.MultiZip;
 import RecScan.Tar;
 
@@ -49,7 +51,7 @@ public class RecScan {
 			System.out.println("Usage:\trecscan [archive] [match string] " +
 					"print fn hits in archive\n" + "\trecscan [archive] " +
 					"list all archive contents");
-			return; // 0;
+			return;// 0;
 		} else if (args.length == 1) {
 			//let's get the entire archive's content list (with all sub-
 			//archives)
@@ -61,7 +63,8 @@ public class RecScan {
 			}
 			
 			try {
-				rawlist = Tar.tarListDir(MultiZip.openStream(target));
+				//rawlist = Tar.tarListDir(MultiZip.openStream(target));
+				rawlist = Tar.tarListDir(new FileInputStream(args[0]));
 			} catch (Exception e) {
 				System.err.println(e);
 				return;// 2;
@@ -147,6 +150,7 @@ public class RecScan {
 	
 	/**
 	 * cleans up any dingleberries laying around (not utilized)
+	 * @param tempDir File of temporary directory to remove
 	 */
 	@SuppressWarnings("unused")
 	private void cleanUp(File tempDir) throws Exception {

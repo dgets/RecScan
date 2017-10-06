@@ -2,8 +2,6 @@ package RecScan;
 import java.io.*;
 import java.util.zip.*;
 
-//import RecScan;
-
 /**
  * @author Damon Getsman
  * Decompression routines
@@ -32,10 +30,13 @@ public class MultiZip {
 						new BufferedInputStream(fis));
 				return (InputStream) zis;
 			} else {
+				System.err.println(
+						"Unsupported archive type in openStream()");
 				throw new Exception(
 						"Unsupported archive type in openStream()");
 			}
 		} catch (IOException e) {
+			System.err.println("openStream(): " + e.getMessage());
 			throw new Exception("openStream(): " + e.getMessage());
 		} finally {
 			fis.close();

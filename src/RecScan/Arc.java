@@ -24,17 +24,6 @@ public class Arc extends ArcStruct {
 	//constructor(s)
 	public Arc() { }
 	
-	/*public Arc(String fn) {
-		//this.fn = fn;
-		
-		//should this just be thrown/tried from w/in init()?
-		try {
-			init(fn);
-		} catch (Exception e) {
-			System.out.println("Fucked: " + e);
-		}
-	}*/
-	
 	//methods
 	/**
 	 * Initializes Arc object for dealing with fname
@@ -49,7 +38,7 @@ public class Arc extends ArcStruct {
 		try {
 			setArcType();
 		} catch (Exception e) {
-			System.out.println("Fucked: " + e);
+			System.err.println("Fucked: " + e);
 			throw new Exception("Problem in Arc.init()");
 		}
 	}
@@ -57,6 +46,7 @@ public class Arc extends ArcStruct {
 	/**
 	 * Sets the archive type depending on fn's extension
 	 * @throws Exception
+	 * This should be private :P
 	 */
 	public void setArcType() throws Exception {
 		if (this.fn.endsWith(RecScan.GZ)) {
@@ -65,6 +55,7 @@ public class Arc extends ArcStruct {
 			this.arcType = RecScan.ZIP;
 		} else {
 			//not implemented
+			System.err.println("Invalid/unhandled archive");
 			throw new Exception("Unhandled or invalid archive");
 		}
 	}
