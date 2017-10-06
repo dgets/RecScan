@@ -1,4 +1,4 @@
-package recscan;
+package RecScan;
 
 import java.io.InputStream;
 

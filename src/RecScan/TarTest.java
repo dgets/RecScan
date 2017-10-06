@@ -1,4 +1,4 @@
-package recscan;
+package RecScan;
 
 import static org.junit.Assert.*;
 

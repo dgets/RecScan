@@ -1,8 +1,8 @@
-package recscan;
+package RecScan;
 
 import java.io.File;
-import recscan.MultiZip;
-import recscan.Tar;
+import RecScan.MultiZip;
+import RecScan.Tar;
 
 /**
  * 
@@ -41,7 +41,7 @@ public class RecScan {
 	 * @param args[] - just the usual for main()
 	 * @return int - 0 success/1 Arc.init() failure/2 Tar/MultiZip failure
 	 */
-	public static int main(String[] args) {
+	public static void main(String[] args) {
 		Arc target 			= new Arc();
 		String[] rawlist 	= null;
 		
@@ -49,7 +49,7 @@ public class RecScan {
 			System.out.println("Usage:\trecscan [archive] [match string] " +
 					"print fn hits in archive\n" + "\trecscan [archive] " +
 					"list all archive contents");
-			return 0;
+			return; // 0;
 		} else if (args.length == 1) {
 			//let's get the entire archive's content list (with all sub-
 			//archives)
@@ -57,14 +57,14 @@ public class RecScan {
 				target.init(args[0]);
 			} catch (Exception e) {
 				System.err.println(e);
-				return 1;
+				return;// 1;
 			}
 			
 			try {
 				rawlist = Tar.tarListDir(MultiZip.openStream(target));
 			} catch (Exception e) {
 				System.err.println(e);
-				return 2;
+				return;// 2;
 			}
 			
 			//do we need recursion? I guess to avoid decompressing twice we
@@ -77,7 +77,7 @@ public class RecScan {
 		}
 		
 		System.out.println(rawlist.toString() + "\n");
-		return 0;
+		return;// 0;
 	}
 	
 	/**

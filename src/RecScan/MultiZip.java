@@ -1,4 +1,4 @@
-package recscan;
+package RecScan;
 import java.io.*;
 import java.util.zip.*;
 
@@ -33,12 +33,12 @@ public class MultiZip {
 				throw new Exception(
 						"Unsupported archive type in openStream()");
 			}
+			
+			return (InputStream) fis;
 		} catch (IOException e) {
 			throw new Exception("openStream(): " + e.getMessage());
 		} finally {
 			fis.close();
 		}
-		
-		return (InputStream) fis;
 	}
 }
