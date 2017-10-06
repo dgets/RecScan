@@ -18,23 +18,23 @@ public class MultiZip {
 	 * 
 	 */
 	public static InputStream openStream(Arc curArc) throws Exception {
-		FileInputStream fis = new FileInputStream(curArc.getFn());
+		InputStream fis = new FileInputStream(curArc.getFn());
 		
 		try {			
 			if (curArc.getArcType().equals(RecScan.GZ)) {
 				@SuppressWarnings("unused")
 				GZIPInputStream zis = new GZIPInputStream(
 						new BufferedInputStream(fis));
+				return (InputStream) zis;
 			} else if (curArc.getArcType().equals(RecScan.ZIP)){
 				@SuppressWarnings("unused")
 				ZipInputStream zis = new ZipInputStream(
 						new BufferedInputStream(fis));
+				return (InputStream) zis;
 			} else {
 				throw new Exception(
 						"Unsupported archive type in openStream()");
 			}
-			
-			return (InputStream) fis;
 		} catch (IOException e) {
 			throw new Exception("openStream(): " + e.getMessage());
 		} finally {

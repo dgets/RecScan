@@ -22,14 +22,14 @@ public class Tar {
 	 */
 	@SuppressWarnings("null")
 	public static String[] tarListDir(InputStream incoming) throws Exception {
-		TarArchiveInputStream tarInput = null;
+		TarArchiveInputStream tarInput = new TarArchiveInputStream(incoming);
 		//TarArchiveOutputStream copyOut = null;
 		String[] directory = null;
 		
 		try {
 			int cntr = 0;
 			
-            tarInput = (TarArchiveInputStream) incoming;
+            //tarInput = (TarArchiveInputStream) incoming;
             TarArchiveEntry entry;
             
             while ((entry = tarInput.getNextTarEntry()) != null) {
@@ -38,7 +38,9 @@ public class Tar {
             }
             
         } catch (Exception e) {
-            throw new Exception(e.getMessage());
+            throw new Exception(e);
+        } finally {
+        	tarInput.close();
         }
 		
 		return directory;
