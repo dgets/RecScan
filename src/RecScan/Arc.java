@@ -44,13 +44,13 @@ public class Arc extends ArcStruct {
 	}
 	
 	/**
-	 * Sets the archive type depending on fn's extension
+	 * Sets the archive type depending on fn's extension; probably should
+	 * be returning TAR when GZ detected, though
 	 * @throws Exception
-	 * This should be private :P
 	 */
-	public void setArcType() throws Exception {
+	private void setArcType() throws Exception {
 		if (this.fn.endsWith(RecScan.GZ)) {
-			this.arcType = RecScan.GZ;
+			this.arcType = RecScan.TAR;
 		} else if (fn.endsWith(RecScan.ZIP)) {
 			this.arcType = RecScan.ZIP;
 		} else {

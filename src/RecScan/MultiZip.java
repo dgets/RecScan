@@ -16,10 +16,17 @@ public class MultiZip {
 	 * 
 	 */
 	public static InputStream openStream(Arc curArc) throws Exception {
+		if (RecScan.verbose) {
+			System.out.println("Opening fis . . .");
+		}
 		InputStream fis = new FileInputStream(curArc.getFn());
 		
 		try {			
 			if (curArc.getArcType().equals(RecScan.GZ)) {
+				if (RecScan.verbose) {
+					System.out.println("Opening zis . . .");
+				}
+				
 				@SuppressWarnings("unused")
 				GZIPInputStream zis = new GZIPInputStream(
 						new BufferedInputStream(fis));

@@ -1,8 +1,6 @@
 package RecScan;
 
 import java.io.File;
-import java.io.FileInputStream;
-
 import RecScan.MultiZip;
 import RecScan.Tar;
 
@@ -27,6 +25,7 @@ public class RecScan {
 	//compressors
 	public static final String BZ2 			= 	new String("bz2");
 	public static final String GZ 			= 	new String("gz");
+												//.tar.gz better maybe?
 	public static final String LZ4			=	new String("lz4");
 	public static final String RAR			=	new String("rar");
 	public static final String XZ			=	new String("xz");
@@ -46,7 +45,8 @@ public class RecScan {
 	 * @return int - 0 success/1 Arc.init() failure/2 Tar/MultiZip failure
 	 */
 	public static void main(String[] args) {
-		Arc target 			= new Arc();
+		//Arc target 			= new Arc();
+		@SuppressWarnings("unused")
 		String[] rawlist 	= null;
 		
 		if ((args.length == 3) && (isVerbose(args[0]))) {
@@ -60,6 +60,11 @@ public class RecScan {
 		} else if ((args.length == 2) && (isVerbose(args[0]))) {
 			verbose = true;
 			//verbosely get full listing in potentially recursive archive
+			try {
+				rawlist = getRawlist(args[1]);
+			} catch (Exception e) {
+				System.err.println("Borkage: " + e.getMessage());
+			}
 			
 		} else if (args.length == 2) {
 			verbose = false;
@@ -119,29 +124,30 @@ public class RecScan {
 			return;
 	}
 	
-	/**
-	 * 
-	 * @param fname - archive filename
-	 * @return Archive - initialized archive object
-	 * @throws Exception
-	 */
-	/*private Archive initTarget(String fname) throws Exception {
-		Archive tgt	=	new Archive();
+	private static String[] getRawlist(String fn) throws Exception {
+		Arc 		tgt 		=	new Arc();
+		String[] 	contents	=	null;
 		
-		tgt.init();
-		
+		if (verbose) {
+			System.out.println("Initializing tgt");
+		}
 		try {
-			tgt.setArcType(determineType(fname));
+			tgt.init(fn);
 		} catch (Exception e) {
-			//yeah we need to do this on stderr, but I'm not looking that
-			//up right this second
-			//System.out.println(e);
-			throw new Exception(e);
+			System.err.println("Fubar in getRawlist(): " + e.getMessage());
+			throw new Exception("getRawlist() borked");
 		}
 		
-		tgt.setFn(fname);
-		return tgt;
-	}*/
+		if (verbose) {
+			System.out.println("Executing tgt.getArcType()");
+		}
+		if (tgt.getArcType().equals(TAR)) {
+			System.out.println("Archive is " + TAR + "." + GZ);
+			contents = Tar.tarListDir(MultiZip.openStream(tgt));
+		}
+		
+		return contents;
+	}
 	
 	//NOTE: this does NOT handle any recursion yet
 	/**

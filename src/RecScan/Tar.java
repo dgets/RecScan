@@ -1,7 +1,6 @@
 package RecScan;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,8 +29,11 @@ public class Tar {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("null")
-	public static String[] tarListDir(FileInputStream incoming) 
+	public static String[] tarListDir(InputStream incoming) 
 			throws Exception {
+		if (RecScan.verbose) {
+			System.out.println("Opening tarInput . . .");
+		}
 		TarArchiveInputStream tarInput = new TarArchiveInputStream(incoming);
 		//FileInputStream fIncoming = (FileInputStream) incoming;
 		//InputStream godFuckingOuah = (InputStream) fIncoming;
@@ -47,16 +49,22 @@ public class Tar {
             TarArchiveEntry entry;
             
             while ((entry = tarInput.getNextTarEntry()) != null) {
+            	if (RecScan.verbose) {
+            		System.out.print("Pulling entry: ");
+            	}
                 //System.out.println(entry.getName());
             	directory[cntr++] = entry.getName();
+            	if (RecScan.verbose) {
+            		System.out.println(directory[cntr - 1]);
+            	}
             }
             
         } catch (Exception e) {
         	System.err.println("Fucked: tarListDir() " + e);
             throw new Exception(e);
-        } /*finally {
+        } finally {
         	tarInput.close();
-        }*/
+        }
 		
 		return directory;
 	}
