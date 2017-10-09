@@ -39,6 +39,8 @@ public class RecScan {
 	
 	public static final String EXE			=	new String("path_to_exe");
 	
+	public static Boolean verbose 			=	null;
+	
 	/**
 	 * @param args[] - just the usual for main()
 	 * @return int - 0 success/1 Arc.init() failure/2 Tar/MultiZip failure
@@ -47,12 +49,39 @@ public class RecScan {
 		Arc target 			= new Arc();
 		String[] rawlist 	= null;
 		
-		if ((args.length == 0) || (args.length > 2)) {
-			System.out.println("Usage:\trecscan [archive] [match string] " +
-					"print fn hits in archive\n" + "\trecscan [archive] " +
-					"list all archive contents");
-			return;// 0;
+		if ((args.length == 3) && (isVerbose(args[0]))) {
+			verbose = true;
+			//verbosely search full (recursive?) listing for match string
+			
+		} else if (args.length == 3) {
+			//bogus
+			dumpUsage();
+			return;
+		} else if ((args.length == 2) && (isVerbose(args[0]))) {
+			verbose = true;
+			//verbosely get full listing in potentially recursive archive
+			
+		} else if (args.length == 2) {
+			verbose = false;
+			//search full (recursive?) listing for match
+			
+		} else if ((args.length == 1) && (isVerbose(args[0]))) {
+			//just a verbose flag doesn't help anyone much
+			dumpUsage();
+			return;
 		} else if (args.length == 1) {
+			verbose = false;
+			//just get the full listing
+		} else {
+			if (args.length == 0) {
+				dumpUsage();
+				return;
+			}
+		}
+		
+		/* } else if ((args.length == 1) || (args.lenth == 2)) {
+			if ((args.length == 1) && (args[0].equals("-v")) {
+				
 			//let's get the entire archive's content list (with all sub-
 			//archives)
 			try {
@@ -80,7 +109,14 @@ public class RecScan {
 		}
 		
 		System.out.println(rawlist.toString() + "\n");
-		return;// 0;
+		return;// 0;*/
+	}
+		
+	public static void dumpUsage() {
+		System.out.println("Usage:\trecscan [-v] [archive] [match " +
+				"string] print string's hits in archive\n" + 
+				"\trecscan [-v] [archive] list all archive contents");
+			return;
 	}
 	
 	/**
@@ -147,6 +183,14 @@ public class RecScan {
 		dirList = tarListDir(Tar.tarListDir(tarFile));
 		
 	}*/
+	
+	public static Boolean isVerbose(String arg) {
+		if (arg.equals("-v")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 	/**
 	 * cleans up any dingleberries laying around (not utilized)
