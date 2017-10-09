@@ -22,7 +22,7 @@ public class MultiZip {
 		InputStream fis = new FileInputStream(curArc.getFn());
 		
 		try {			
-			if (curArc.getArcType().equals(RecScan.GZ)) {
+			if (curArc.getArcType().equals(RecScan.TAR)) {
 				if (RecScan.verbose) {
 					System.out.println("Opening zis . . .");
 				}

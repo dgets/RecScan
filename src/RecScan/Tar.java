@@ -34,12 +34,8 @@ public class Tar {
 		if (RecScan.verbose) {
 			System.out.println("Opening tarInput . . .");
 		}
+		
 		TarArchiveInputStream tarInput = new TarArchiveInputStream(incoming);
-		//FileInputStream fIncoming = (FileInputStream) incoming;
-		//InputStream godFuckingOuah = (InputStream) fIncoming;
-
-		// = new TarArchiveInputStream(incoming);
-		//TarArchiveOutputStream copyOut = null;
 		String[] directory = null;
 		
 		try {
@@ -50,16 +46,18 @@ public class Tar {
             
             while ((entry = tarInput.getNextTarEntry()) != null) {
             	if (RecScan.verbose) {
-            		System.out.print("Pulling entry: ");
+            		System.out.print("Pulling entry: " + entry.getName());
             	}
-                //System.out.println(entry.getName());
+            	
             	directory[cntr++] = entry.getName();
             	if (RecScan.verbose) {
             		System.out.println(directory[cntr - 1]);
             	}
             }
             
-        } catch (Exception e) {
+        } catch (NullPointerException npe) {
+        	//end of archive assumed at this point
+		} catch (Exception e) {
         	System.err.println("Fucked: tarListDir() " + e);
             throw new Exception(e);
         } finally {
@@ -162,18 +160,4 @@ public class Tar {
 	        }
 	        untaredFiles.add(outputFile);
 	    }*/
-	
-	/**
-	 * 
-	 * @param incoming InputStream - uncompressed data stream
-	 * @return String - temp directory filename
-	 * @throws Exception
-	 */
-	/*public static String extract(InputStream incoming) throws Exception {
-		TarArchiveInputStream tarinput = null;
-		
-		try {
-			
-		}
-	}*/
 }
