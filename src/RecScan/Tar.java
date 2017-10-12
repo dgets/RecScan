@@ -40,23 +40,77 @@ public class Tar {
 		
 		try {
 			int cntr = 0;
+			int totalEntries;
 			
             //tarInput = (TarArchiveInputStream) incoming;
             TarArchiveEntry entry;
             
-            while ((entry = tarInput.getNextTarEntry()) != null) {
+            //should we add !tarInput.isAtEOF() to the while, perhaps?
+            //also, are we going to need to recurse with
+            //.getDirectoryEntries() in here at some point?  not sure how the
+            //actual TarArchiveEntry is arranged yet
+            totalEntries = 10; //tarInput.available();
+            if (RecScan.verbose) {
+            	System.out.println(totalEntries + " total tar entries");
+            }
+            
+            for (; cntr < totalEntries; cntr++) {
+            	entry = tarInput.getNextTarEntry();
             	if (RecScan.verbose) {
-            		System.out.print("Pulling entry: " + entry.getName());
+            		System.out.println("Read entry #" + (cntr + 1));
             	}
             	
-            	directory[cntr++] = entry.getName();
+            	//while ((entry = tarInput.getNextTarEntry()) != null) {
             	if (RecScan.verbose) {
-            		System.out.println(directory[cntr - 1]);
+            		System.out.println("Pulling entry: " + entry.getName());
+            	}
+            	
+            	//other conditions?
+            	if (entry.isGlobalPaxHeader()) {
+            		if (RecScan.verbose) {
+            			System.out.println("-Found Global Pax Header-");
+            		}
+            		continue;
+            	} else if (entry.isFile()) {
+            		if (RecScan.verbose) {
+            			System.out.println("-Valid File Found-");
+            		}
+            		
+            		//I guess right around here we'd have to do any calls to
+            		//and looping over .getDirectoryEntries()
+            		directory[cntr] = entry.getName();
+                	if (RecScan.verbose) {
+                		System.out.println(directory[cntr]);
+                	}
+            	} else if (entry.isDirectory()) {
+            		if (RecScan.verbose) {
+            			System.out.println("-Valid Directory Found-");;
+            		}
+            		
+            		for (TarArchiveEntry ouah : 
+            			entry.getDirectoryEntries()) {
+            			//not going to test them out just yet
+            			if (RecScan.verbose) {
+            				System.out.println(entry.getName());
+            			}
+            			
+            			directory[cntr++] = entry.getName();
+            			//if this is the last directory entry is this going to
+            			//mess up our cntr values?
+            		}
+            	} else {
+            		if (RecScan.verbose) {
+            			System.out.println("-No Idea-");
+            		}
             	}
             }
             
+            if (RecScan.verbose) {
+            	System.out.println("Exited tarInput while");
+            }
         } catch (NullPointerException npe) {
         	//end of archive assumed at this point
+        	System.err.println("NP Fucked: tarListDir() " + npe);
 		} catch (Exception e) {
         	System.err.println("Fucked: tarListDir() " + e);
             throw new Exception(e);

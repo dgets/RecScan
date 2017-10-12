@@ -129,7 +129,7 @@ public class RecScan {
 		String[] 	contents	=	null;
 		
 		if (verbose) {
-			System.out.println("Initializing tgt");
+			System.out.println("Verbose:\nInitializing tgt");
 		}
 		try {
 			tgt.init(fn);
