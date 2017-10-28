@@ -40,6 +40,8 @@ public class RecScan {
 	
 	public static Boolean verbose 			=	null;
 	
+	public static final Boolean debugging	=	true;
+	
 	/**
 	 * @param args[] - just the usual for main()
 	 * @return int - 0 success/1 Arc.init() failure/2 Tar/MultiZip failure
@@ -83,38 +85,6 @@ public class RecScan {
 				return;
 			}
 		}
-		
-		/* } else if ((args.length == 1) || (args.lenth == 2)) {
-			if ((args.length == 1) && (args[0].equals("-v")) {
-				
-			//let's get the entire archive's content list (with all sub-
-			//archives)
-			try {
-				target.init(args[0]);
-			} catch (Exception e) {
-				System.err.println(e);
-				return;// 1;
-			}
-			
-			try {
-				//rawlist = Tar.tarListDir(MultiZip.openStream(target));
-				rawlist = Tar.tarListDir(new FileInputStream(args[0]));
-			} catch (Exception e) {
-				System.err.println(e);
-				return;// 2;
-			}
-			
-			//do we need recursion? I guess to avoid decompressing twice we
-			//should probably decompress to /tmp in the first place :|
-			
-		} else {
-			//print every match of userstring from the archive's entire
-			//content list
-			
-		}
-		
-		System.out.println(rawlist.toString() + "\n");
-		return;// 0;*/
 	}
 		
 	public static void dumpUsage() {
@@ -128,7 +98,7 @@ public class RecScan {
 		Arc 		tgt 		=	new Arc();
 		String[] 	contents	=	null;
 		
-		if (verbose) {
+		if (verbose || debugging) {
 			System.out.println("Verbose:\nInitializing tgt");
 		}
 		try {
@@ -138,10 +108,12 @@ public class RecScan {
 			throw new Exception("getRawlist() borked");
 		}
 		
-		if (verbose) {
+		if (verbose || debugging) {
 			System.out.println("Executing tgt.getArcType()");
 		}
 		if (tgt.getArcType().equals(TAR)) {
+			//so yeah this isn't always going to be GZ
+			//BUG
 			System.out.println("Archive is " + TAR + "." + GZ);
 			contents = Tar.tarListDir(MultiZip.openStream(tgt));
 		}

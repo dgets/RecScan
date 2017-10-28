@@ -16,25 +16,27 @@ public class MultiZip {
 	 * 
 	 */
 	public static InputStream openStream(Arc curArc) throws Exception {
-		if (RecScan.verbose) {
+		if (RecScan.verbose || RecScan.debugging) {
 			System.out.println("Opening fis . . .");
 		}
 		InputStream fis = new FileInputStream(curArc.getFn());
 		
 		try {			
 			if (curArc.getArcType().equals(RecScan.TAR)) {
-				if (RecScan.verbose) {
+				if (RecScan.verbose || RecScan.debugging) {
 					System.out.println("Opening zis . . .");
 				}
 				
 				@SuppressWarnings("unused")
 				GZIPInputStream zis = new GZIPInputStream(
 						new BufferedInputStream(fis));
+				
 				return (InputStream) zis;
 			} else if (curArc.getArcType().equals(RecScan.ZIP)){
 				@SuppressWarnings("unused")
 				ZipInputStream zis = new ZipInputStream(
 						new BufferedInputStream(fis));
+				
 				return (InputStream) zis;
 			} else {
 				System.err.println(

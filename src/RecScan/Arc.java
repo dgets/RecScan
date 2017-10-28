@@ -38,7 +38,7 @@ public class Arc extends ArcStruct {
 		try {
 			setArcType();
 		} catch (Exception e) {
-			System.err.println("Fucked: " + e);
+			System.err.println("Fucked1: " + e.getMessage());
 			throw new Exception("Problem in Arc.init()");
 		}
 	}
