@@ -55,11 +55,16 @@ public class Tar {
 		}
 
 		//entry = tarInput.getNextTarEntry();
-		do {
+		//do {
+		while (tarInput.available() != 0) {
 			try {
-				entry = tarInput.getNextTarEntry();
+				entry = tarInput.getNextTarEntry();	
 			} catch (Exception e) {
 				throw new Exception("Looping .getNextTarEntry() borked");
+			}
+			
+			if ((entry == null) || (tarInput.getCount() == 0)) {
+				break;
 			}
 			
 			if (RecScan.debugging) {
@@ -108,7 +113,7 @@ public class Tar {
 					System.out.println("-No Idea-");
 				}
 			}
-		} while (tarInput.available() > 0);
+		} //while (tarInput.available() > 0);
 
 		if (RecScan.verbose || RecScan.debugging) {
 			System.out.println("Exited tarInput while");
