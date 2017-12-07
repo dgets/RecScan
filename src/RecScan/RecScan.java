@@ -1,6 +1,9 @@
 package RecScan;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import RecScan.MultiZip;
 import RecScan.Tar;
 
@@ -49,7 +52,8 @@ public class RecScan {
 	public static void main(String[] args) {
 		//Arc target 			= new Arc();
 		@SuppressWarnings("unused")
-		String[] rawlist 	= null;
+		//String[] rawlist 	= null;
+		List<String> rawlist = new ArrayList<String>();
 		
 		if ((args.length == 3) && (isVerbose(args[0]))) {
 			verbose = true;
@@ -94,9 +98,10 @@ public class RecScan {
 			return;
 	}
 	
-	private static String[] getRawlist(String fn) throws Exception {
+	private static List<String> getRawlist(String fn) throws Exception {
 		Arc 		tgt 		=	new Arc();
-		String[] 	contents	=	null;
+		//String[] 	contents	=	null;
+		List<String> contents = new ArrayList<String>();
 		
 		if (verbose || debugging) {
 			System.out.println("Verbose:\nInitializing tgt");
@@ -115,7 +120,16 @@ public class RecScan {
 			//so yeah this isn't always going to be GZ
 			//BUG
 			System.out.println("Archive is " + TAR + "." + GZ);
-			contents = Tar.tarListDir(MultiZip.openStream(tgt));
+			try {
+				contents = Tar.tarListDir(MultiZip.openStream(tgt));
+			} catch (Exception e) {
+				throw new Exception("Issue in getRawList()'s call to " +
+						"Tar.tarListDir():\n" + e.getMessage());
+			}
+		}
+		
+		if (debugging) {
+			System.out.println(contents.toString());
 		}
 		
 		return contents;

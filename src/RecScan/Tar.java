@@ -8,6 +8,8 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -28,7 +30,29 @@ public class Tar {
 	 * @return String[] - directory listing
 	 * @throws Exception
 	 */
-	@SuppressWarnings({ "null", "deprecation" })
+	public static List<String> tarListDir(InputStream incoming) 
+		throws Exception {
+		TarArchiveInputStream tarInput = new TarArchiveInputStream(incoming);
+		TarArchiveEntry entry = null;
+		//String[] directory = null;
+		List<String> ouah = new ArrayList<String>();
+		int cntr = 0;
+		
+		try {
+			while ((entry = tarInput.getNextTarEntry()) != null) {
+				//directory[cntr++] = entry.getName();
+				ouah.add(entry.getName());
+			}
+		} catch (Exception e) {
+			tarInput.close();
+			//throw new Exception("ouah: " + e.getMessage());
+		}
+		
+		//tarInput.close();
+		//return directory;
+		return ouah;
+	}
+	/*@SuppressWarnings({ "null", "deprecation" })
 	public static String[] tarListDir(InputStream incoming) 
 			throws Exception {
 		if (RecScan.verbose || RecScan.debugging) {
@@ -44,34 +68,30 @@ public class Tar {
 		String[] directory = null;
 
 		int cntr = 0;
-		//also, are we going to need to recurse with
-		//.getDirectoryEntries() in here at some point?  not sure how the
-		//actual TarArchiveEntry is arranged yet
 		
-		if (RecScan.debugging) {
-			//System.out.println(totalEntries + " total tar entries");
-			System.out.println("tarInput.getCount(): " + tarInput.getCount());
-			System.out.println(tarInput.available() + " total available");
-		}
-
-		//entry = tarInput.getNextTarEntry();
-		//do {
-		while (tarInput.available() != 0) {
+		//if (RecScan.debugging) {
+		//	//System.out.println(totalEntries + " total tar entries");
+		//	//System.out.println("tarInput.getCount(): " + tarInput.getCount());
+		//	System.out.println(tarInput.available() + " total available");
+		//}
+		
+		while (incoming.available() > 0) {
 			try {
-				entry = tarInput.getNextTarEntry();	
+				entry = tarInput.getNextTarEntry();
 			} catch (Exception e) {
-				throw new Exception("Looping .getNextTarEntry() borked");
-			}
-			
-			if ((entry == null) || (tarInput.getCount() == 0)) {
-				break;
+				throw new Exception ("tarInput.getNextTarEntry()");
 			}
 			
 			if (RecScan.debugging) {
 				System.out.println("Read entry #" + (cntr + 1));
 			}
+			
+			try {
+				entry = tarInput.getNextTarEntry();	
+			} catch (Exception e) {
+				throw new Exception("Looping .getNextTarEntry() borked");
+			}
 
-			//while ((entry = tarInput.getNextTarEntry()) != null) {
 			if (RecScan.debugging) {
 				System.out.println("Pulling entry: " + entry.getName());
 			}
@@ -87,52 +107,42 @@ public class Tar {
 					System.out.println("-Valid File Found-");
 				}
 
-				//I guess right around here we'd have to do any calls to
-				//and looping over .getDirectoryEntries()
 				directory[cntr] = entry.getName();
 				if (RecScan.verbose || RecScan.debugging) {
 					System.out.println(directory[cntr]);
 				}
 			} else if (entry.isDirectory()) {
 				if (RecScan.verbose || RecScan.debugging) {
-					System.out.println("-Valid Directory Found-");;
+					System.out.println("-Valid Directory Found-");
 				}
 
-				//bug?
-				/*for (TarArchiveEntry ouah : 
-					entry.getDirectoryEntries()) {
-					//not going to test them out just yet
-					if (RecScan.verbose) {
-						System.out.println(entry.getName());
-					}
-
-					directory[cntr++] = entry.getName();
-				}*/
+				directory[cntr] = entry.getName();	//correct?
 			} else {
 				if (RecScan.verbose || RecScan.debugging) {
 					System.out.println("-No Idea-");
 				}
 			}
-		} //while (tarInput.available() > 0);
+			
+			cntr++;
+		}
 
+		tarInput.close();
 		if (RecScan.verbose || RecScan.debugging) {
 			System.out.println("Exited tarInput while");
 		}
-            
-        tarInput.close();
         
-        /*} catch (NullPointerException npe) {
-        	//end of archive assumed at this point
-        	System.err.println("NP Fucked: tarListDir() " + npe);
-		} catch (Exception e) {
-        	System.err.println("Fucked: tarListDir() " + e);
-            throw new Exception(e);
-        } finally {
-        	tarInput.close();
-        }*/
+//        } catch (NullPointerException npe) {
+//        	//end of archive assumed at this point
+//        	System.err.println("NP Fucked: tarListDir() " + npe);
+//		} catch (Exception e) {
+//        	System.err.println("Fucked: tarListDir() " + e);
+//            throw new Exception(e);
+//        } finally {
+//        	tarInput.close();
+//        }
 		
 		return directory;
-	}
+	}*/
 	
 	/**
 	 * Method extracts input stream's associated tar archive to a temporary
