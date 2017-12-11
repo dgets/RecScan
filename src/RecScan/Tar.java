@@ -40,16 +40,32 @@ public class Tar {
 		
 		try {
 			while ((entry = tarInput.getNextTarEntry()) != null) {
-				//directory[cntr++] = entry.getName();
 				ouah.add(entry.getName());
+				
+				if (RecScan.verbose || RecScan.debugging) {
+					if (entry.isFile()) {
+						System.out.print("file: \t");
+					} else if (entry.isDirectory()) {
+						System.out.print("dir: \t");
+					} else {
+						System.out.print("wut: \t");
+					}
+					
+					System.out.println(ouah.get(ouah.size() - 1));
+				}
+				
+				//ouah.add(entry.getName());
 			}
 		} catch (Exception e) {
 			tarInput.close();
-			//throw new Exception("ouah: " + e.getMessage());
+			throw new Exception("Closed w/exception: " + e.getMessage());
 		}
 		
-		//tarInput.close();
-		//return directory;
+		if (RecScan.verbose || RecScan.debugging) {
+			System.out.println("Closing tarInput normally");
+		}
+		tarInput.close();
+		
 		return ouah;
 	}
 	/*@SuppressWarnings({ "null", "deprecation" })
