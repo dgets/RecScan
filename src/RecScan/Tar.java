@@ -34,9 +34,7 @@ public class Tar {
 		throws Exception {
 		TarArchiveInputStream tarInput = new TarArchiveInputStream(incoming);
 		TarArchiveEntry entry = null;
-		//String[] directory = null;
 		List<String> ouah = new ArrayList<String>();
-		int cntr = 0;
 		
 		try {
 			while ((entry = tarInput.getNextTarEntry()) != null) {
@@ -54,7 +52,6 @@ public class Tar {
 					System.out.println(ouah.get(ouah.size() - 1));
 				}
 				
-				//ouah.add(entry.getName());
 			}
 		} catch (Exception e) {
 			tarInput.close();
@@ -146,16 +143,6 @@ public class Tar {
 		if (RecScan.verbose || RecScan.debugging) {
 			System.out.println("Exited tarInput while");
 		}
-        
-//        } catch (NullPointerException npe) {
-//        	//end of archive assumed at this point
-//        	System.err.println("NP Fucked: tarListDir() " + npe);
-//		} catch (Exception e) {
-//        	System.err.println("Fucked: tarListDir() " + e);
-//            throw new Exception(e);
-//        } finally {
-//        	tarInput.close();
-//        }
 		
 		return directory;
 	}*/
@@ -212,45 +199,4 @@ public class Tar {
 		
 		return tempDir;
 	}
-	
-	/** Untar an input file into an output file.
-	 *
-	 * The output file is created in the output folder, having the same name
-	 * as the input file, minus the '.tar' extension. 
-	 * 
-	 * @param inputFile     the input .tar file
-	 * @param outputDir     the output directory file. 
-	 * @throws IOException 
-	 * @throws FileNotFoundException
-	 *  
-	 * @return  The {@link List} of {@link File}s with the untared content.
-	 * @throws ArchiveException 
-	 */
-	//method currently under modification for my purposes
-	/*public static List<File> unTar(InputStream inputFile, final File outputDir) 
-			throws FileNotFoundException, IOException, ArchiveException {
-
-	    LOG.info(String.format("Untaring %s to dir %s.", inputFile.getAbsolutePath(), outputDir.getAbsolutePath()));
-
-	    final List<File> untarredFiles = new LinkedList<File>();
-	    final TarArchiveInputStream debInputStream = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream("tar", is);
-	    TarArchiveEntry entry = null; 
-	    while ((entry = (TarArchiveEntry)debInputStream.getNextEntry()) != null) {
-	        final File outputFile = new File(outputDir, entry.getName());
-	        if (entry.isDirectory()) {
-	            LOG.info(String.format("Attempting to write output directory %s.", outputFile.getAbsolutePath()));
-	            if (!outputFile.exists()) {
-	                LOG.info(String.format("Attempting to create output directory %s.", outputFile.getAbsolutePath()));
-	                if (!outputFile.mkdirs()) {
-	                    throw new IllegalStateException(String.format("Couldn't create directory %s.", outputFile.getAbsolutePath()));
-	                }
-	            }
-	        } else {
-	            LOG.info(String.format("Creating output file %s.", outputFile.getAbsolutePath()));
-	            final OutputStream outputFileStream = new FileOutputStream(outputFile); 
-	            IOUtils.copy(debInputStream, outputFileStream);
-	            outputFileStream.close();
-	        }
-	        untaredFiles.add(outputFile);
-	    }*/
 }
