@@ -52,7 +52,7 @@ public class ArcStruct {
 		stuffIt.put(L, null);
 		//stuffIt.put(X, "-d");
 		stuffIt.put(O, null);
-		algo.put(RecScan.GZ, stuffIt);
+		algo.put(RecScan.TARGZ, stuffIt);
 		
 		//tar
 		stuffIt.put(RecScan.EXE, "/bin/tar");

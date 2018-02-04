@@ -30,6 +30,7 @@ public class Tar {
 	 * @return String[] - directory listing
 	 * @throws Exception
 	 */
+	@SuppressWarnings("deprecation")
 	public static List<String> tarListDir(InputStream incoming) 
 		throws Exception {
 		TarArchiveInputStream tarInput = new TarArchiveInputStream(incoming);
@@ -39,6 +40,13 @@ public class Tar {
 		try {
 			while ((entry = tarInput.getNextTarEntry()) != null) {
 				ouah.add(entry.getName());
+				
+				if (RecScan.verbose && RecScan.debugging) {
+					System.out.println("tarInput.getCount(): " + 
+						tarInput.getCount());
+					System.out.println("tarInput.available(): " + 
+						tarInput.available());
+				}
 				
 				if (RecScan.verbose || RecScan.debugging) {
 					if (entry.isFile()) {
@@ -55,7 +63,7 @@ public class Tar {
 			}
 		} catch (Exception e) {
 			tarInput.close();
-			throw new Exception("Closed w/exception: " + e.getMessage());
+			throw new Exception("Closed w/exception: " + e.getMessage() + "\n");
 		}
 		
 		if (RecScan.verbose || RecScan.debugging) {

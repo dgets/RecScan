@@ -49,10 +49,12 @@ public class Arc extends ArcStruct {
 	 * @throws Exception
 	 */
 	private void setArcType() throws Exception {
-		if (this.fn.endsWith(RecScan.GZ)) {
+		if (this.fn.endsWith(RecScan.TARGZ)) {
 			this.arcType = RecScan.TAR;
 		} else if (fn.endsWith(RecScan.ZIP)) {
 			this.arcType = RecScan.ZIP;
+		} else if (fn.endsWith(RecScan.TAR)) {
+			this.arcType = RecScan.TAR;
 		} else {
 			//not implemented
 			System.err.println("Invalid/unhandled archive");

@@ -27,12 +27,12 @@ public class RecScan {
 	//'constants'
 	//compressors
 	public static final String BZ2 			= 	new String("bz2");
-	public static final String GZ 			= 	new String("gz");
-												//.tar.gz better maybe?
+	public static final String TARGZ		= 	new String("tar.gz");	//our options need to be expanded here
+	//public static final String TAR			=	new String("tar");
 	public static final String LZ4			=	new String("lz4");
 	public static final String RAR			=	new String("rar");
 	public static final String XZ			=	new String("xz");
-	public static final String COMPLIST[]	= 	{BZ2, GZ, LZ4, RAR, XZ};
+	public static final String COMPLIST[]	= 	{BZ2, TARGZ, LZ4, RAR, XZ};
 
 	//archivers
 	public static final String TAR			=	new String("tar");
@@ -104,7 +104,7 @@ public class RecScan {
 		List<String> contents = new ArrayList<String>();
 		
 		if (verbose || debugging) {
-			System.out.println("Verbose:\nInitializing tgt");
+			System.out.println("Verbose:\nInitializing tgt\n");
 		}
 		try {
 			tgt.init(fn);
@@ -116,10 +116,8 @@ public class RecScan {
 		if (verbose || debugging) {
 			System.out.println("Executing tgt.getArcType()");
 		}
-		if (tgt.getArcType().equals(TAR)) {
-			//so yeah this isn't always going to be GZ
-			//BUG
-			System.out.println("Archive is " + TAR + "." + GZ);
+		if (tgt.getArcType().equals(TARGZ)) {
+			System.out.println("Archive is " + TARGZ);
 			try {
 				contents = Tar.tarListDir(MultiZip.openStream(tgt));
 			} catch (Exception e) {
